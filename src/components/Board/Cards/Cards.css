@@ -6,3 +6,6 @@
   margin: 0.5rem auto;
   width: calc(100vw - 0.5rem);
 }
+.matched {
+  display: none;
+}
