@@ -7,27 +7,53 @@ import { Card } from "./Card";
 
 export const Cards = () => {
   const [cards, setCards] = useState([]);
+  const [flippedCards, setFlippedCards] = useState([]);
 
   useEffect(() => {
     (async () => {
       const { cards } = await api.index(4);
-      setCards(cards);
+      // Duplicate the cards and assign each one a uniq id using code and the current index
+
+      const cardsWithDups = cards.concat(Array.from(cards));
+
+      const cardsWithIDs = cardsWithDups.map((card, i) => {
+        const cardCopy = JSON.parse(JSON.stringify(card));
+        cardCopy.id = `${cardCopy.code}-${i}`;
+        return cardCopy;
+      });
+
+      setCards(cardsWithIDs);
     })();
   }, []);
 
-  const flipHandler = ({ target }) => {
-    console.log(target);
-  };
+  const flipHandler = ({ target: { dataset } }) => {
+    //if it's true that there is no length on flippedCards..
+if (!flippedCards.length) {
+  setFlippedCards((flippedCards) =>
+      flippedCards.concat({ id: dataset.id, code: dataset.code })
+    );
+  } else if (flippedCards[0].id !== dataset.id){  setFlippedCards((flippedCards) =>
+    flippedCards.concat({ id: dataset.id, code: dataset.code })
+  );
+    // we can still add a card as long as it it's not the same card
+  }
+}
 
-  return cards.map((card, i) => (
+
+
+  return cards.map(({ code, id, image, suit, value }, i) => (
     <Card
-      image={card.image}
-      suit={card.suit}
-      value={card.value}
+      code={code}
+      id={id}
+      image={image}
+      suit={suit}
+      value={value}
       key={i}
       handler={flipHandler}
     />
   ));
 };
 
-Cards.propTypes = {};
+Cards.propTypes = {
+  handler: PropTypes.func,
+};
