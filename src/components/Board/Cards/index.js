@@ -1,32 +1,33 @@
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import React, { useEffect, useState } from "react";
-import { Timer } from "./Timer";
-import Card from "./Card";
+
 import api from "api";
 
-export const Cards = ({ handler }) => {
+import { Card } from "./Card";
+
+export const Cards = () => {
   const [cards, setCards] = useState([]);
 
   useEffect(() => {
     (async () => {
-      const cards = await api.index();
+      const { cards } = await api.index(4);
       setCards(cards);
     })();
   }, []);
 
-  const flipHandler = (event) => {};
+  const flipHandler = ({ target }) => {
+    console.log(target);
+  };
 
-  return cards.map(({ image, suit, value, i }) => (
+  return cards.map((card, i) => (
     <Card
-      image={image}
-      suit={suit}
-      value={value}
+      image={card.image}
+      suit={card.suit}
+      value={card.value}
       key={i}
       handler={flipHandler}
     />
   ));
 };
 
-Cards.propTypes = {
-  handler: PropTypes.func,
-};
+Cards.propTypes = {};
