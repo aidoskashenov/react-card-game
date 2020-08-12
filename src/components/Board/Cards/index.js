@@ -1,36 +1,17 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 
-import api from "api";
 
 import { Card } from "./Card";
+import "./Cards.css";
 
-export const Cards = () => {
-  const [cards, setCards] = useState([]);
+export const Cards = ({cards, handler}) => {
+
   const [flippedCards, setFlippedCards] = useState([]);
 
-  useEffect(
-    () => {
-      (async () => {
-        const { cards } = await api.index(4);
-        // Duplicate the cards and assign each one a uniq id using code and the current index
 
-        const cardsWithDups = cards.concat(Array.from(cards));
 
-        const cardsWithIDs = cardsWithDups.map((card, i) => {
-          const cardCopy = JSON.parse(JSON.stringify(card));
-          cardCopy.id = `${cardCopy.code}-${i}`;
-          return cardCopy;
-        });
-
-        setCards(cardsWithIDs);
-      })();
-    },
-    // dot not retrigger this event after the initial mount
-    []
-  );
-
-  useEffect(() => {
+ /** useEffect(() => {
     setCards((prevCards) =>
       prevCards.map((card) => {
         if (card.id === flippedCards[0].id || card.id === flippedCards[1]?.id) {
@@ -49,7 +30,7 @@ export const Cards = () => {
       });
     }
   }, [flippedCards]);
-
+*/
   const flipHandler = ({ target: { dataset } }) => {
     //if it's true that there is no length on flippedCards..
     if (!flippedCards.length) {
@@ -80,5 +61,6 @@ export const Cards = () => {
 };
 
 Cards.propTypes = {
+  cards: PropTypes.array.isRequired,
   handler: PropTypes.func,
 };
