@@ -26,7 +26,7 @@ export const Cards = () => {
         setCards(cardsWithIDs);
       })();
     },
-    // dot not retriger this event after the initial mount
+    // dot not retrigger this event after the initial mount
     []
   );
 
