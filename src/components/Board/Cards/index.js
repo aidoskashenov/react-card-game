@@ -15,10 +15,14 @@ export const Cards = ({ cards, handler }) => {
       );
       setFlippedCards([]);
     }
+
+    if (matchedCards.length === cards.length / 2-1) {
+      handler(false)
+    }
     if (flippedCards.length === 2) {
       setTimeout(() => {
         setFlippedCards([]);
-      }, 3000);
+      }, 2000);
     }
   }, [flippedCards]);
 

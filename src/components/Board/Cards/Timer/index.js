@@ -2,7 +2,11 @@ import React from "react";
 import PropTypes from "prop-types";
 
 export const Timer = ({ toggle }) => {
-  return <p>Timer</p>;
+  return <p>{toggle}</p>;
 };
 
-Timer.propTypes = { toggle: PropTypes.func.isRequired };
+Timer.propTypes = { toggle: PropTypes.bool };
+
+Timer.defaultProps = {
+  toggle: false
+}
