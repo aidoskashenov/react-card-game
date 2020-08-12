@@ -45,7 +45,7 @@ export const Cards = ({ cards, handler }) => {
         flipped = true;
       }
       if (matchedCards.includes(code)) {
-        flipped = true;
+        matched = true;
       }
 
       return (
