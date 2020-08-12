@@ -1,26 +1,24 @@
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 
 export const Card = ({
   code,
   id,
+  image,
   flipped,
   matched,
-  image,
-  value,
   suit,
+  value,
   handler,
 }) => {
   return (
     <button onClick={handler}>
       <img
+        src={flipped ? image : "https://source.unsplash.com/random/226x314"}
         alt={`${value} of ${suit}`}
-        data-flipped={flipped}
-        src={flipped ? image : "https://source.unsplash.com/random/225x314"}
-        onClick={handler}
-        // Code will be used to just compare the card values
+        // 'code' will be used to just compare the 'card values'
         data-code={code}
-        // id will be used used to id the correct card in the array{dataset.id}
+        // id will be used to id the correct card in our Array of cards (dataset.id)
         data-id={id}
         className={matched ? "matched" : null}
       />
@@ -35,7 +33,7 @@ Card.propTypes = {
   id: PropTypes.string,
   image: PropTypes.string.isRequired,
   matched: PropTypes.bool,
-  suit: PropTypes.string,
+  suit: PropTypes.string.isRequired,
   value: PropTypes.string.isRequired,
 };
 

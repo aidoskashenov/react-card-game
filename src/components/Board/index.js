@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
-import { Timer } from "./Cards/Timer";
 import { Cards } from "./Cards";
+import { Timer } from "./Cards/Timer";
 
 export const Board = () => {
   return (
