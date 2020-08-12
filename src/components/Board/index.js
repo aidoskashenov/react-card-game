@@ -13,7 +13,7 @@ export const Board = () => {
 // using a spread operator to make new object
         const dupCards = {...cards}
 
-        // Duplicate the cards and then add unique id to each one (⚠️ 'references')
+        // Duplicate the cards and then add unique id to each one (warning 'references')
         const cardsWithIDs = cards.concat(Array.from(cards)).map((card, i) => {
           const cardCopy = {...card};
           cardCopy.id = `${cardCopy.code}-${i}`;
