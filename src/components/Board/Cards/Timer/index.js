@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
+import "bulma/css/bulma.css";
 
 export const Timer = ({ toggle }) => {
   const [time, setTime] = useState(0);
@@ -16,7 +17,11 @@ export const Timer = ({ toggle }) => {
     }
   });
 
-  return <p>{time}</p>;
+  return (
+    <p className="has-background-dark has-text-centered is-size-1 py-2 has-text-danger">
+      {time}
+    </p>
+  );
 };
 
 Timer.propTypes = { toggle: PropTypes.bool };

@@ -1,89 +1,93 @@
-import React, { useState, useEffect, Fragment } from "react";
 import PropTypes from "prop-types";
-import api from "api";
+import React, { useState, useEffect } from "react";
+
 import { Card } from "./Card";
-import "./Cards.css";
+
+import api from "api";
+
+import shuffle from "lodash.shuffle";
 
 export const Cards = ({ handler }) => {
   const [cards, setCards] = useState([]);
 
-  useEffect(
-    () => {
-      (async () => {
-        const { cards } = await api.index(4);
-        // using a spread operator to make new object
-        const dupCards = { ...cards };
+  useEffect(() => {
+    (async () => {
+      const { cards } = await api.index(4);
 
-        // Duplicate the cards and then add unique id to each one (warning 'references')
-        const cardsWithIDs = cards.concat(Array.from(cards)).map((card, i) => {
-          const cardCopy = { ...card };
-          cardCopy.id = `${cardCopy.code}-${i}`;
-          return cardCopy;
-        });
+      // Duplicate the cards and then add unique id to each one (⚠️ 'references')
+      const cardsWithIDs = cards.concat(Array.from(cards)).map((card, i) => {
+        // We can do the 'spread' 'shallow copy' for these non-nested objects
+        const cardCopy = { ...card };
+        cardCopy.id = `${cardCopy.code}-${i}`;
+        return cardCopy;
+      });
 
-        setCards(cardsWithIDs);
-      })();
-    },
-    // DO NOT re-trigger this effect after the initial mount - don't worry about state changes!
-    []
-  );
+      setCards(shuffle(cardsWithIDs));
+    })();
+  }, []);
 
-  const flipHandler = ({ target: { dataset } }) => {
+  const flipHandler = ({ currentTarget: { dataset } }) => {
+    const { code, id } = dataset;
+
+    const flippedCards = cards.filter(
+      ({ flipped, matched }) => flipped && !matched
+    );
+
     handler(true);
-    const { id, code } = dataset;
-    const flippedCards = cards.filter(({ flipped }) => flipped);
-    // get the code and ID from the dataset and will filter out flipped cards
-    // if there are no flipped cards, we can immediately find and flip the card that matches dataset id(setCards)
-    // Check if any cards are currently flipped
-    // as long as there are less that two cards and the clicked  card is not the same id
-    // once again  redo things
+
     if (flippedCards.length < 2) {
-      setCards(
-        cards.find((card) => {
-          if (card.id === id) {
-            card.flipped = true;
-          }
-        })
-      );
-      // Check for a match by comparing codes between the two flipped cards
-      // at this point it looks like this in the console == "[], [{flipped cards}]"
-      // we need to use question mark to negate the "code undefined", you can also put else if
+      setCards(truthifyCards("id", "flipped", id));
+
+      // If the codes of the currently flipped card and the dataset match...
       if (flippedCards[0]?.code === code) {
-        setCards(
-          //update the cards and mark the correct ones as matched based on codes
-          cards.find((card) => {
-            if (card.code === code) {
-              card.matched = true;
-            }
-            return card;
-          })
-        );
+        setCards(truthifyCards("code", "matched", code));
+
+        if (!cards.find(({ matched }) => !matched)) {
+          handler(false);
+        }
+      } else if (flippedCards[0]) {
+        setTimeout(() => {
+          setCards(resetFlippedCards());
+        }, 1500);
       }
     }
   };
 
-  const renderCards = () => {
-    return cards.map(
-      ({ code, id, image, flipped, suit, value, matched }, i) => {
-        return (
-          <Card
-            code={code}
-            id={id}
-            image={image}
-            flipped={flipped}
-            suit={suit}
-            value={value}
-            key={i}
-            matched={matched}
-            handler={flipHandler}
-          />
-        );
+  const resetFlippedCards = () =>
+    cards.map((card) => {
+      card.flipped = false;
+      return card;
+    });
+
+  const truthifyCards = (k2Locate, k2Change, val2Match) =>
+    cards.map((card) => {
+      if (card[k2Locate] === val2Match) {
+        card[k2Change] = true;
       }
-    );
-  };
+      return card;
+    });
+
+  const renderCards = () =>
+    // 'suit' and 'value' are just for alt tag
+    cards.map(({ code, flipped, matched, id, image, suit, value }, i) => {
+      return (
+        <Card
+          code={code}
+          flipped={flipped}
+          id={id}
+          image={image}
+          matched={matched}
+          suit={suit}
+          value={value}
+          handler={flipHandler}
+          key={i}
+        />
+      );
+    });
+
   return <div className="container">{renderCards()}</div>;
 };
+
 Cards.propTypes = {
-  cards: PropTypes.array.isRequired,
   handler: PropTypes.func,
 };
