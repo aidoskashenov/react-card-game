@@ -32,23 +32,12 @@ export const Cards = ({ handler }) => {
     handler(true);
     const { id, code } = dataset;
     const flippedCards = cards.filter(({ flipped }) => flipped);
-      // get the code and ID from the dataset and will filter out flipped cards
+    // get the code and ID from the dataset and will filter out flipped cards
     // if there are no flipped cards, we can immediately find and flip the card that matches dataset id(setCards)
     // Check if any cards are currently flipped
-    if (!flippedCards.length) {
-      setCards(
-        cards.map((card) => {
-          if (card.id === id) {
-            card.flipped = true;
-          }
-        })
-      );
-    }
     // as long as there are less that two cards and the clicked  card is not the same id
     // once again  redo things
-    if (
-      flippedCards.length < 2)
-    ) {
+    if (flippedCards.length < 2) {
       setCards(
         cards.find((card) => {
           if (card.id === id) {
@@ -56,9 +45,21 @@ export const Cards = ({ handler }) => {
           }
         })
       );
+      // Check for a match by comparing codes between the two flipped cards
+      // at this point it looks like this in the console == "[], [{flipped cards}]"
+      // we need to use question mark to negate the "code undefined", you can also put else if
+      if (flippedCards[0]?.code === code) {
+        setCards(
+          //update the cards and mark the correct ones as matched based on codes
+          cards.find((card) => {
+            if (card.code === code) {
+              card.matched = true;
+            }
+            return card;
+          })
+        );
+      }
     }
-
-
   };
 
   const renderCards = () => {
