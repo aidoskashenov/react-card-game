@@ -12,14 +12,14 @@ export const Card = ({
   handler,
 }) => {
   return (
-    <button onClick={handler}>
+    <button onClick={handler} data-code={code} data-id={id}>
       <img
         src={flipped ? image : "https://source.unsplash.com/random/226x314"}
         alt={`${value} of ${suit}`}
         // 'code' will be used to just compare the 'card values'
-        data-code={code}
+
         // id will be used to id the correct card in our Array of cards (dataset.id)
-        data-id={id}
+
         className={matched ? "matched" : null}
       />
     </button>

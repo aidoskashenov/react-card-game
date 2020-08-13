@@ -6,6 +6,7 @@ import "./Cards.css";
 
 export const Cards = ({ handler }) => {
   const [cards, setCards] = useState([]);
+
   useEffect(
     () => {
       (async () => {
@@ -29,25 +30,55 @@ export const Cards = ({ handler }) => {
 
   const flipHandler = ({ target: { dataset } }) => {
     handler(true);
-    // we can still add a card as long as it it's not the same card
+    const { id, code } = dataset;
+    const flippedCards = cards.filter(({ flipped }) => flipped);
+      // get the code and ID from the dataset and will filter out flipped cards
+    // if there are no flipped cards, we can immediately find and flip the card that matches dataset id(setCards)
+    // Check if any cards are currently flipped
+    if (!flippedCards.length) {
+      setCards(
+        cards.map((card) => {
+          if (card.id === id) {
+            card.flipped = true;
+          }
+        })
+      );
+    }
+    // as long as there are less that two cards and the clicked  card is not the same id
+    // once again  redo things
+    if (
+      flippedCards.length < 2)
+    ) {
+      setCards(
+        cards.find((card) => {
+          if (card.id === id) {
+            card.flipped = true;
+          }
+        })
+      );
+    }
+
+
   };
 
   const renderCards = () => {
-    return cards.map(({ code, id, image, flipped, suit, value, matched }, i) => {
-      return (
-        <Card
-          code={code}
-          id={id}
-          image={image}
-          flipped={flipped}
-          suit={suit}
-          value={value}
-          key={i}
-          matched={matched}
-          handler={flipHandler}
-        />
-      );
-    });
+    return cards.map(
+      ({ code, id, image, flipped, suit, value, matched }, i) => {
+        return (
+          <Card
+            code={code}
+            id={id}
+            image={image}
+            flipped={flipped}
+            suit={suit}
+            value={value}
+            key={i}
+            matched={matched}
+            handler={flipHandler}
+          />
+        );
+      }
+    );
   };
   return <div className="container">{renderCards()}</div>;
 };
