@@ -1,57 +1,39 @@
 import React, { useState, useEffect, Fragment } from "react";
 import PropTypes from "prop-types";
-
+import api from "api";
 import { Card } from "./Card";
 import "./Cards.css";
 
-export const Cards = ({ cards, handler }) => {
-  const [flippedCards, setFlippedCards] = useState([]);
-  const [matchedCards, setMatchedCards] = useState([]);
+export const Cards = ({ handler }) => {
+  const [cards, setCards] = useState([]);
+  useEffect(
+    () => {
+      (async () => {
+        const { cards } = await api.index(4);
+        // using a spread operator to make new object
+        const dupCards = { ...cards };
 
-  useEffect(() => {
-    if (flippedCards.length && flippedCards[0].code === flippedCards[1]?.code) {
-      setMatchedCards((prevMatched) =>
-        prevMatched.concat(flippedCards[0]?.code)
-      );
-      setFlippedCards([]);
-    }
+        // Duplicate the cards and then add unique id to each one (warning 'references')
+        const cardsWithIDs = cards.concat(Array.from(cards)).map((card, i) => {
+          const cardCopy = { ...card };
+          cardCopy.id = `${cardCopy.code}-${i}`;
+          return cardCopy;
+        });
 
-    if (matchedCards.length === cards.length / 2-1) {
-      handler(false)
-    }
-    if (flippedCards.length === 2) {
-      setTimeout(() => {
-        setFlippedCards([]);
-      }, 2000);
-    }
-  }, [flippedCards]);
+        setCards(cardsWithIDs);
+      })();
+    },
+    // DO NOT re-trigger this effect after the initial mount - don't worry about state changes!
+    []
+  );
 
   const flipHandler = ({ target: { dataset } }) => {
-    //if it's true that there is no length on flippedCards..
-    // id is for uniqly id this card and code is for comparing matching value
-    if (dataset && !flippedCards.length) {
-      setFlippedCards((flippedCards) =>
-        flippedCards.concat({ id: dataset.id, code: dataset.code })
-      );
-    }
-    // this else if is for not to flip the same card 2 times
-    else if (flippedCards[0].id !== dataset.id && flippedCards.length < 2) {
-      setFlippedCards((flippedCards) =>
-        flippedCards.concat({ id: dataset.id, code: dataset.code })
-      );
-    }
+    handler(true);
     // we can still add a card as long as it it's not the same card
   };
 
   const renderCards = () => {
     return cards.map(({ code, id, image, flipped, suit, value, matched }, i) => {
-     if (id === flippedCards[0]?.id || id === flippedCards[1]?.id) {
-        flipped = true;
-      }
-      if (matchedCards.includes(code)) {
-        matched = true;
-      }
-
       return (
         <Card
           code={code}
