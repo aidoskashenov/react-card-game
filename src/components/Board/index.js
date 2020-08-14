@@ -4,6 +4,7 @@ import { Cards } from "./Cards";
 import { Timer } from "./Cards/Timer";
 import { CardInput } from "./CardInput";
 
+
 export const Board = () => {
   const [toggleTimer, setToggleTimer] = useState(false);
   const [numOfRenderedCards, setNumOfRenderedCards] = useState(4);
