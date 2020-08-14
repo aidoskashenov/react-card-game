@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import "bulma/css/bulma.css";
 
+
 export const Timer = ({ toggle }) => {
   const [time, setTime] = useState(0);
   // we are setting up a setInterval while the toggle === true
@@ -12,7 +13,7 @@ export const Timer = ({ toggle }) => {
       }, 1000);
       //  Cleanup function
       return () => {
-        clearInterval(intervalID);
+        clearInterval(intervalID); //
       };
     }
   });

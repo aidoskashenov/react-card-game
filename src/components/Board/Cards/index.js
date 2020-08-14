@@ -1,11 +1,11 @@
 import PropTypes from "prop-types";
 import React, { useState, useEffect } from "react";
-
+import "./Cards.css"
 import { Card } from "./Card";
 
 import api from "api";
 
-import shuffle from "lodash.shuffle";
+import shuffle from "lodash.shuffle"; // we are importing shuffle from lodash and are using it in line24 on the array it "shuffles" the array
 
 export const Cards = ({ handler }) => {
   const [cards, setCards] = useState([]);
@@ -15,10 +15,11 @@ export const Cards = ({ handler }) => {
       const { cards } = await api.index(4);
 
       // Duplicate the cards and then add unique id to each one (⚠️ 'references')
+      // this next piece makes it so we have two sets of same cards
       const cardsWithIDs = cards.concat(Array.from(cards)).map((card, i) => {
         // We can do the 'spread' 'shallow copy' for these non-nested objects
-        const cardCopy = { ...card };
-        cardCopy.id = `${cardCopy.code}-${i}`;
+        const cardCopy = { ...card }; // this makes a new copy of object with new refs
+        cardCopy.id = `${cardCopy.code}-${i}`; // this one is for putting uniq id and this is not a minus its a string this whole thing is a string with template literals
         return cardCopy;
       });
 
@@ -27,7 +28,7 @@ export const Cards = ({ handler }) => {
   }, []);
 
   const flipHandler = ({ currentTarget: { dataset } }) => {
-    const { code, id } = dataset;
+    const { code, id } = dataset; // this is a continuation of the destructuring it just pulling out the code and id, it can look like this:   ({ currentTarget: { dataset:{code ,id} } })
 
     const flippedCards = cards.filter(
       ({ flipped, matched }) => flipped && !matched
@@ -40,6 +41,7 @@ export const Cards = ({ handler }) => {
 
       // If the codes of the currently flipped card and the dataset match...
       if (flippedCards[0]?.code === code) {
+        // ? mark saving a lot easier cause it makes it less strict it asks if cause if there is nothing it will not compile but a ? mark makes it so asks the question
         setCards(truthifyCards("code", "matched", code));
 
         if (!cards.find(({ matched }) => !matched)) {
@@ -59,7 +61,11 @@ export const Cards = ({ handler }) => {
       return card;
     });
 
-  const truthifyCards = (k2Locate, k2Change, val2Match) =>
+  const truthifyCards = (
+    k2Locate,
+    k2Change,
+    val2Match //
+  ) =>
     cards.map((card) => {
       if (card[k2Locate] === val2Match) {
         card[k2Change] = true;
