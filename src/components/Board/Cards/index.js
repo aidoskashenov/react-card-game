@@ -1,18 +1,18 @@
 import PropTypes from "prop-types";
 import React, { useState, useEffect } from "react";
-import "./Cards.css"
+import "./Cards.css";
 import { Card } from "./Card";
 
 import api from "api";
 
 import shuffle from "lodash.shuffle"; // we are importing shuffle from lodash and are using it in line24 on the array it "shuffles" the array
 
-export const Cards = ({ handler }) => {
+export const Cards = ({ handler, numOfRenderedCards }) => {
   const [cards, setCards] = useState([]);
 
   useEffect(() => {
     (async () => {
-      const { cards } = await api.index(4);
+      const { cards } = await api.index(numOfRenderedCards/2);
 
       // Duplicate the cards and then add unique id to each one (⚠️ 'references')
       // this next piece makes it so we have two sets of same cards
@@ -25,7 +25,7 @@ export const Cards = ({ handler }) => {
 
       setCards(shuffle(cardsWithIDs));
     })();
-  }, []);
+  }, [numOfRenderedCards]);
 
   const flipHandler = ({ currentTarget: { dataset } }) => {
     const { code, id } = dataset; // this is a continuation of the destructuring it just pulling out the code and id, it can look like this:   ({ currentTarget: { dataset:{code ,id} } })
@@ -96,4 +96,5 @@ export const Cards = ({ handler }) => {
 
 Cards.propTypes = {
   handler: PropTypes.func,
+  numOfRenderedCards: PropTypes.number,
 };
